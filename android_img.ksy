@@ -56,8 +56,6 @@ instances:
     value: second.addr - base
   tags_offset:
     value: tags_load - base
-  recovery_dtbo_offset:
-    value: recovery_dtbo.offset
   dtb_offset:
     value: dtb.addr - base
     if: header_version > 1
@@ -73,7 +71,7 @@ instances:
     size: second.size
     if: second.size > 0
   recovery_dtbo_img:
-    pos: ((page_size + kernel.size + ramdisk.size + second.size + page_size - 1) / page_size) * page_size
+    pos: recovery_dtbo.offset
     size: recovery_dtbo.size
     if: header_version > 0 and recovery_dtbo.size > 0
   dtb_img:
@@ -111,6 +109,6 @@ types:
       patch:
         value: (version >> 11) & 0x7f
       year:
-        value: (version >> 4) & 0x7f
+        value: ((version >> 4) & 0x7f) + 2000
       month:
         value: version & 0xf
