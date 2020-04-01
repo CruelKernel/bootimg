@@ -37,7 +37,7 @@ seq:
     size: 1024
     encoding: ASCII
   - id: recovery_dtbo
-    type: load_offset
+    type: size_offset
     if: header_version > 0
   - id: boot_header_size
     type: u4
@@ -48,17 +48,23 @@ seq:
 instances:
   base:
     value: kernel.addr - 0x00008000
+    doc: base loading address
   kernel_offset:
     value: kernel.addr - base
+    doc: kernel offset from base
   ramdisk_offset:
-    value: ramdisk.addr - base
+    value: 'ramdisk.addr > 0 ? ramdisk.addr - base : 0'
+    doc: ramdisk offset from base
   second_offset:
-    value: second.addr - base
+    value: 'second.addr > 0 ? second.addr - base : 0'
+    doc: 2nd bootloader offset from base
   tags_offset:
     value: tags_load - base
+    doc: tags offset from base
   dtb_offset:
-    value: dtb.addr - base
+    value: 'dtb.addr > 0 ? dtb.addr - base : 0'
     if: header_version > 1
+    doc: dtb offset from base
   kernel_img:
     pos: page_size
     size: kernel.size
@@ -91,7 +97,7 @@ types:
         type: u4
       - id: addr
         type: u8
-  load_offset:
+  size_offset:
     seq:
       - id: size
         type: u4
